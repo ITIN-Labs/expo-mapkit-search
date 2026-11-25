@@ -1,0 +1,54 @@
+name: Bug report
+description: Something doesn't work as documented.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: expo
+    attributes:
+      label: Expo SDK version
+      placeholder: '58'
+    validations:
+      required: true
+  - type: input
+    id: ios
+    attributes:
+      label: iOS version, and device or simulator
+      placeholder: iOS 26.1, iPhone 16 / simulator
+    validations:
+      required: true
+  - type: dropdown
+    id: build
+    attributes:
+      label: Kind of build
+      options:
+        - Development build
+        - Production or TestFlight build
+        - Expo Go (the package isn't available there)
+    validations:
+      required: true
+  - type: input
+    id: xcode
+    attributes:
+      label: Xcode version
+      placeholder: '26.4'
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: The smallest code that shows the problem. Use made-up data, never real user data.
+      render: ts
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened instead
+    validations:
+      required: true

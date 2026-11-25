@@ -1,0 +1,74 @@
+{
+  "name": "@itin-labs/expo-mapkit-search",
+  "version": "0.0.0",
+  "description": "Apple Maps place search, autocomplete and routes for Expo apps on iOS. No API key, no billing.",
+  "keywords": [
+    "expo",
+    "react-native",
+    "mapkit",
+    "apple-maps",
+    "places",
+    "autocomplete",
+    "geocoding",
+    "directions",
+    "ios"
+  ],
+  "homepage": "https://github.com/ITIN-Labs/expo-mapkit-search#readme",
+  "bugs": {
+    "url": "https://github.com/ITIN-Labs/expo-mapkit-search/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ITIN-Labs/expo-mapkit-search.git"
+  },
+  "license": "MIT",
+  "author": "ITIN Labs",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "ios",
+    "expo-module.config.json",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --test --experimental-test-module-mocks --experimental-test-coverage --test-coverage-include=\"src/**\" --test-coverage-lines=95 --test-coverage-branches=90 --test-coverage-functions=95 \"test/**/*.test.ts\"",
+    "typecheck": "tsc",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "check:package": "publint --strict && attw --pack . --profile esm-only && size-limit",
+    "changeset": "changeset",
+    "release": "npm test && npm run build && npm run check:package && changeset publish"
+  },
+  "peerDependencies": {
+    "expo": ">=57",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@changesets/cli": "^3.0.3",
+    "@eslint/js": "^10.0.1",
+    "@size-limit/file": "^14.3.0",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "expect-type": "^1.4.0",
+    "expo": "^58.0.26",
+    "fast-check": "^4.11.0",
+    "prettier": "^3.10.1",
+    "publint": "^0.3.25",
+    "size-limit": "^14.3.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.74.0"
+  }
+}
