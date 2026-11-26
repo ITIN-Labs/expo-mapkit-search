@@ -122,7 +122,7 @@ This package sits between them: free and keyless like expo-location, with the au
 - Routes are walking or driving only, with Apple's expected travel time. No transit, cycling, departure times or traffic options.
 - A suggestion request that gets no answer from Apple within 6 seconds rejects with `SEARCH_FAILED`.
 - A `near` point at or very close to a pole makes a search area that doesn't mean much, so results come from anywhere.
-- An unreachable route (across an ocean, or far from any road) is recognised from an undocumented detail of Apple's error, seen on macOS and iOS 27. If a future iOS reports it differently, such a route rejects with `SEARCH_FAILED` instead of resolving to `null`.
+- An unreachable route (across an ocean, or far from any road) is recognised from an undocumented detail of Apple's error, seen on macOS, iOS 26.5 and iOS 27. If a future iOS reports it differently, such a route rejects with `SEARCH_FAILED` instead of resolving to `null`.
 - The package is ESM. Jest with `jest-expo` needs it added to `transformIgnorePatterns` so it gets transformed.
 
 ## Privacy
@@ -137,7 +137,7 @@ Apple handles these requests under its [Apple Maps privacy notice](https://www.a
 
 ## Status and versioning
 
-The JavaScript side has unit tests for every function, including bad input, error mapping and the unavailable path, with property-based tests for coordinate checks. They run on Node 22, 24 and 26 with the native module mocked. The Swift module isn't covered by automated tests. Every function, the error cases and overlapping autocomplete calls have been run by hand in an app built with Expo SDK 57 and 58 on the iOS 27.0 and 27.1 simulators. It hasn't yet been run on a phone, offline, in a release build, or on iOS before 18, which takes different paths for `near` and `citiesOnly`. Xcode 27 can't install iOS 16, the oldest version it supports.
+The JavaScript side has unit tests for every function, including bad input, error mapping and the unavailable path, with property-based tests for coordinate checks. They run on Node 22, 24 and 26 with the native module mocked. The Swift module isn't covered by automated tests. Every function, the error cases and overlapping autocomplete calls have been run by hand in an app built with Expo SDK 57 and 58 on the iOS 27.0 and 27.1 simulators, and in a release build with SDK 57 on an iPhone running iOS 26.5, on Wi-Fi, on cellular and offline. Offline, every call rejected within 50 ms with `SEARCH_FAILED`. It hasn't yet been run on iOS before 18, which takes different paths for `near` and `citiesOnly`. Xcode 27 can't install iOS 16, the oldest version it supports.
 
 Versions are 0.x until the API has settled. A minor release (0.1 to 0.2) can change the API and says how in the changelog; a patch release won't. 1.0 will come when:
 
