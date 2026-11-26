@@ -1,6 +1,6 @@
 {
   "name": "@itin-labs/expo-mapkit-search",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Apple Maps place search, autocomplete and routes for Expo apps on iOS. No API key, no billing.",
   "keywords": [
     "expo",
