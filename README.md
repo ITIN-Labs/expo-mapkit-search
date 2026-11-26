@@ -12,15 +12,15 @@ import { isAvailable, resolveSuggestion, suggestPlaces } from '@itin-labs/expo-m
 const lisbon = { latitude: 38.7223, longitude: -9.1393 };
 
 if (isAvailable) {
-  const suggestions = await suggestPlaces('pastel de bel', { near: lisbon });
-  // [{ id: '…', title: 'Pastéis de Belém', subtitle: 'Rua de Belém 84-92, Lisbon' }, …]
+  const suggestions = await suggestPlaces('pasteis de bel', { near: lisbon });
+  // [{ id: '…', title: 'Pastéis de Belém', subtitle: 'Rua de Belém 84 a 92, 1300-085 Lisbon, Portugal' }, …]
 
   const [place] = await resolveSuggestion(suggestions[0].id);
   // { name: 'Pastéis de Belém', latitude: 38.6975, longitude: -9.2032, address: '…', … }
 }
 ```
 
-It's for Expo and React Native apps that need a search box for places or addresses on iOS, and would rather not sign up for Google Places to get one. It needs a [development build](https://docs.expo.dev/develop/development-builds/introduction/) (`npx expo run:ios` or EAS Build), since Expo Go doesn't include it. It runs on iOS 16.4 and later. It has only been compiled against Expo SDK 58; the peer range allows 57, whose native module API is the same.
+It's for Expo and React Native apps that need a search box for places or addresses on iOS, and would rather not sign up for Google Places to get one. It needs a [development build](https://docs.expo.dev/develop/development-builds/introduction/) (`npx expo run:ios` or EAS Build), since Expo Go doesn't include it. It runs on iOS 16.4 and later. It has been run with Expo SDK 57 and 58.
 
 ## API
 
@@ -32,16 +32,16 @@ False on Android, on the web and in Expo Go. Every function rejects with `UNAVAI
 
 ### `suggestPlaces(query, options?): Promise<Suggestion[]>`
 
-Autocomplete for what's been typed so far, from the same service as Apple Maps' own search box, so half-typed words work. Resolves to at most 8 suggestions, each `{ id, title, subtitle }`. A suggestion can be a place, an address, or a search such as "Coffee near Lisbon", which resolves to several places. An empty or blank query resolves to `[]` without a request, which suits a search box being cleared.
+Autocomplete for what's been typed so far, from the same service as Apple Maps' own search box, so half-typed words work. Resolves to at most 8 suggestions, each `{ id, title, subtitle }`. A suggestion can be a place, an address, or a search such as "Coffee", which resolves to several places. A search's subtitle is Apple's prompt, such as "Search Nearby", in the device's language, so don't use it to tell searches apart. An empty or blank query resolves to `[]` without a request, which suits a search box being cleared.
 
-| Option       | Type         | Default  | Meaning                                                                                                           |
-| ------------ | ------------ | -------- | ----------------------------------------------------------------------------------------------------------------- |
-| `near`       | `Coordinate` | anywhere | Only suggest places within about 20 km of here. On iOS 18 and later this is enforced; earlier, it's a preference. |
-| `citiesOnly` | `boolean`    | `false`  | Only suggest towns and cities. On iOS before 18 it suggests addresses, which include them.                        |
+| Option       | Type         | Default  | Meaning                                                                                           |
+| ------------ | ------------ | -------- | ------------------------------------------------------------------------------------------------- |
+| `near`       | `Coordinate` | anywhere | Prefer places within about 20 km of here. Famous places and addresses elsewhere can still appear. |
+| `citiesOnly` | `boolean`    | `false`  | Only suggest towns and cities. On iOS before 18 it suggests addresses, which include them.        |
 
 ### `resolveSuggestion(id): Promise<Place[]>`
 
-The places a suggestion stands for: one for a place or address, up to 10 for a search. A search keeps to the `near` area of the `suggestPlaces` call it came from. Only the suggestions from the most recently started `suggestPlaces` call can be resolved; an id from an earlier call rejects with `UNKNOWN_SUGGESTION`, even if that call answered last. While someone types, show only the answer to the newest call.
+The places a suggestion stands for: one for a place or address, up to 10 for a search. A search keeps to the `near` area of the `suggestPlaces` call it came from. Once the most recently started `suggestPlaces` call answers, only its suggestions can be resolved; an id from an earlier call rejects with `UNKNOWN_SUGGESTION`, even if that call answered last. A blank query or a failed call doesn't replace the list, so the previous suggestions still resolve after one. While someone types, show only the answer to the newest call.
 
 ### `searchPlaces(query, options?): Promise<Place[]>`
 
@@ -117,12 +117,12 @@ This package sits between them: free and keyless like expo-location, with the au
 ## Known limitations
 
 - Only the most recently started `suggestPlaces` call's suggestions can be resolved. Two suggestion lists on screen at once would conflict.
-- The `near` areas are fixed at about 20 km for suggestions and 30 km for search, and only iOS 18 and later can keep suggestions inside the area.
+- The `near` areas are fixed at about 20 km for suggestions and 30 km for search. For suggestions it's a preference: Apple still lists well-known places elsewhere, such as the Eiffel Tower when searching near Lisbon. Resolved suggestions and `searchPlaces` stay inside the area.
 - Result counts are fixed at 8 suggestions, 10 places for a resolved suggestion and 8 for a search.
 - Routes are walking or driving only, with Apple's expected travel time. No transit, cycling, departure times or traffic options.
 - A suggestion request that gets no answer from Apple within 6 seconds rejects with `SEARCH_FAILED`.
 - A `near` point at or very close to a pole makes a search area that doesn't mean much, so results come from anywhere.
-- An unreachable route (across an ocean, or far from any road) is recognised from an undocumented detail of Apple's error, seen on macOS. If iOS reports it differently, such a route rejects with `SEARCH_FAILED` instead of resolving to `null`.
+- An unreachable route (across an ocean, or far from any road) is recognised from an undocumented detail of Apple's error, seen on macOS and iOS 27. If a future iOS reports it differently, such a route rejects with `SEARCH_FAILED` instead of resolving to `null`.
 - The package is ESM. Jest with `jest-expo` needs it added to `transformIgnorePatterns` so it gets transformed.
 
 ## Privacy
@@ -137,7 +137,7 @@ Apple handles these requests under its [Apple Maps privacy notice](https://www.a
 
 ## Status and versioning
 
-The JavaScript side has unit tests for every function, including bad input, error mapping and the unavailable path, with property-based tests for coordinate checks. They run on Node 22, 24 and 26 with the native module mocked. The Swift module isn't covered by automated tests. It has been compiled against Expo SDK 58 and never run in an app. The MapKit calls match code running in a production app; the error handling is new, and its route and ordering logic has only been checked against macOS MapKit.
+The JavaScript side has unit tests for every function, including bad input, error mapping and the unavailable path, with property-based tests for coordinate checks. They run on Node 22, 24 and 26 with the native module mocked. The Swift module isn't covered by automated tests. Every function, the error cases and overlapping autocomplete calls have been run by hand in an app built with Expo SDK 57 and 58 on the iOS 27.0 and 27.1 simulators. It hasn't yet been run on a phone, offline, in a release build, or on iOS before 18, which takes different paths for `near` and `citiesOnly`. Xcode 27 can't install iOS 16, the oldest version it supports.
 
 Versions are 0.x until the API has settled. A minor release (0.1 to 0.2) can change the API and says how in the changelog; a patch release won't. 1.0 will come when:
 
