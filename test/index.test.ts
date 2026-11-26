@@ -107,6 +107,15 @@ describe('suggestPlaces', () => {
     });
   });
 
+  it('leaves the native code and Swift file out of the message, as older Expo SDKs add them', async () => {
+    const failure = Object.assign(
+      new Error('E_SEARCH_FAILED: The request timed out. (at ExpoModulesCore/Promise.swift:65)'),
+      { code: 'E_SEARCH_FAILED' },
+    );
+    native.suggest.mock.mockImplementationOnce(() => Promise.reject(failure));
+    await assert.rejects(suggestPlaces('café'), { message: 'Apple Maps request failed: The request timed out.' });
+  });
+
   it('passes any valid coordinate through unchanged and refuses every invalid one', async () => {
     await fc.assert(
       fc.asyncProperty(

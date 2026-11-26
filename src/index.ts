@@ -27,12 +27,15 @@ export interface Place {
   url: string;
 }
 
-/** An autocomplete suggestion: a place, an address, or a search such as "Coffee near Lisbon". */
+/** An autocomplete suggestion: a place, an address, or a search such as "Coffee". */
 export interface Suggestion {
-  /** Pass to resolveSuggestion. Only valid until the next suggestPlaces call. */
+  /** Pass to resolveSuggestion. Valid until a later suggestPlaces call returns suggestions. */
   id: string;
   title: string;
-  /** The address or area. '' for a search, which resolves to several places. */
+  /**
+   * The address or area. For a search, which resolves to several places, Apple's prompt such as
+   * "Search Nearby". It's localized, so don't use it to tell searches apart.
+   */
   subtitle: string;
 }
 
@@ -45,7 +48,7 @@ export interface Route {
 }
 
 export interface SuggestOptions {
-  /** Only suggest places within about 20 km of here (iOS 18 and later; on earlier versions it's a preference). */
+  /** Prefer places within about 20 km of here. Famous places and addresses elsewhere can still appear. */
   near?: Coordinate;
   /** Only suggest towns and cities. On iOS before 18 it suggests addresses, which include them. Default false. */
   citiesOnly?: boolean;
@@ -161,11 +164,14 @@ async function call<T>(promise: Promise<T>): Promise<T> {
     if ((error as { code?: unknown } | null | undefined)?.code === 'E_UNKNOWN_SUGGESTION') {
       throw new MapKitSearchError(
         'UNKNOWN_SUGGESTION',
-        'That suggestion is no longer available. Suggestions are replaced on each suggestPlaces call; ask again.',
+        'That suggestion is no longer available. Suggestions are replaced when a newer suggestPlaces call returns; ask again.',
         { cause: error },
       );
     }
-    const reason = error instanceof Error ? error.message : String(error);
+    // Older Expo SDKs put the native code in front of the message and the Swift file after it.
+    const reason = (error instanceof Error ? error.message : String(error))
+      .replace(/^E_[A-Z_]+: /, '')
+      .replace(/ \(at [^()]*\)$/, '');
     throw new MapKitSearchError('SEARCH_FAILED', `Apple Maps request failed: ${reason}`, { cause: error });
   }
 }
