@@ -36,8 +36,8 @@ public class ExpoMapKitSearchModule: Module {
         completer.resultTypes = [.pointOfInterest, .address, .query]
       }
       // A region is only a hint, and Apple fills the list with well-known places anywhere. iOS 18
-      // adds regionPriority .required, but on iOS 27 the list still included them, so it's set in
-      // case it helps and documented as a preference.
+      // adds regionPriority .required, but on iOS 26.5 and 27 the list still included them, so it's set
+      // in case it helps and documented as a preference.
       let region = latitude.flatMap { lat in longitude.map { Self.region(lat, $0, meters: 40_000) } }
       if let region {
         completer.region = region
@@ -155,7 +155,7 @@ public class ExpoMapKitSearchModule: Module {
     if error.code == .placemarkNotFound || error.code == .directionsNotFound { return true }
     // No route between two points comes back as serverFailure carrying a directions problem
     // (NOT_REACHABLE, FAR_FROM_ROADS), not as directionsNotFound.
-    // shortcut: that userInfo key is undocumented (seen on macOS and iOS 27). If a later iOS
+    // shortcut: that userInfo key is undocumented (seen on macOS, iOS 26.5 and iOS 27). If a later iOS
     // drops it, unreachable routes reject with E_SEARCH_FAILED instead of resolving null.
     return error.code == .serverFailure && error.userInfo["MKErrorDirectionsErrorInfoKey"] != nil
   }

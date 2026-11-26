@@ -6,7 +6,7 @@ Autocomplete uses `MKLocalSearchCompleter`, the service behind Apple Maps' own s
 
 Free-text search is a plain `MKLocalSearch` with a natural-language query, and routes use `MKDirections`, with the route's polyline thinned to about 200 points before it's sent.
 
-Apple reports "nothing found" as an error: `placemarkNotFound` for searches, and for routes either `directionsNotFound` or, between unreachable points, `serverFailure` carrying a directions problem in its `userInfo`. That last key is undocumented; it was observed on macOS and on iOS 27, and it's marked as a shortcut in case a later iOS changes it. The module turns those into an empty list or `null`, since an empty result is a normal answer, and rejects with a code for everything else. The JavaScript side maps those codes to `MapKitSearchError`.
+Apple reports "nothing found" as an error: `placemarkNotFound` for searches, and for routes either `directionsNotFound` or, between unreachable points, `serverFailure` carrying a directions problem in its `userInfo`. That last key is undocumented; it was observed on macOS, iOS 26.5 and iOS 27, and it's marked as a shortcut in case a later iOS changes it. The module turns those into an empty list or `null`, since an empty result is a normal answer, and rejects with a code for everything else. The JavaScript side maps those codes to `MapKitSearchError`.
 
 All native functions run on the main queue. The completer needs it, and it keeps the module's small amount of state single-threaded without locks.
 
