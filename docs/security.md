@@ -22,7 +22,7 @@ A request that never finishes leaves a promise waiting forever. Defence: suggest
 
 Error messages leaking what someone typed. Defence: messages never include the query or coordinates. The native error is kept as `cause`, where its text is Apple's.
 
-Supply chain. No runtime dependencies (Expo and React Native are peers the app already has), a committed lockfile, `npm ci` in CI, `npm audit`, CodeQL, Dependabot, actions pinned to commit SHAs, no install scripts, and publishing through npm trusted publishing with provenance.
+Supply chain. No runtime dependencies (Expo and React Native are peers the app already has), a committed lockfile, `npm ci` in CI, `npm audit`, CodeQL, Dependabot, actions pinned to commit SHAs, no install scripts, and releases staged through npm trusted publishing, so each version goes live only when a maintainer approves it with 2FA.
 
 ## What leaves the device
 

@@ -49,7 +49,7 @@
     "check:package": "publint --strict && attw --pack . --profile esm-only && size-limit",
     "changeset": "changeset",
     "version-packages": "changeset version && npm install --package-lock-only",
-    "release": "npm test && npm run build && npm run check:package && changeset publish"
+    "release": "npm test && npm run build && npm run check:package && npm stage publish"
   },
   "peerDependencies": {
     "expo": ">=57",
